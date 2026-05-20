@@ -1,0 +1,1 @@
+"Formatteer dit Markdown-bestand conform de volgende regels: maak hoofdstuk- en lab-koppen consistent (gebruik ## voor hoofdstuk, ### voor labs, #### voor stappen/opgaven), zet alle code in python-blokken en alle antwoorden/uitleg in text-blokken. Houd inhoud onveranderd, alleen opmaak aanpassen."
