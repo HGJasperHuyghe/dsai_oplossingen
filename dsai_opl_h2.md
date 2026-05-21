@@ -103,30 +103,53 @@ The mean cannot be determined directly from this box plot (but it is likely slig
 ```
 
 #### Oefening 2 (Exercise 2)
+
+1. In each group, the box plot of this data looks the same. Which box plot is that?
 ```text
-Opgave:
-De lengtes van de eerstejaarsleerlingen worden genoteerd. Het gemiddelde, de mediaan, het bereik en de standaardafwijking worden berekend.
-Bij het analyseren van alle lengtes ontdekt de onderzoeker dat door een vergissing ook de lengte van een van de leraren in de metingen is opgenomen. Ze verwijdert de lengte van de leraar en berekent de maten van centrale tendens en dispersie opnieuw.
+C
+```
+2. The standard deviations of the three groups are as follows:  
+A. 127.67  
+B. 158.70  
+C. 171.59  
+Provide the correct standard deviation for each group.
+```text
+Groep 1: 171.59 (C)
 
-Wat is het effect op:
-- het gemiddelde (mean)
-- the mediaan (median)
-- het bereik (range)
-- de standaardafwijking (standard deviation)
+Groep 2: 127.67 (A)
 
-Leg in elk geval kort uit.
+Groep 3: 158.70 (B)
 ```
 
+
+4. Removing 250 euros from the data set changes the mode, but not the median and the mean. This statement is true for  
+* Group 1  
+* Group 2  
+* Group 3  
+Multiple answers may be correct.
+
+
 ```text
-Oplossingssleutel & Uitleg:
-Het gemiddelde: Daalt een beetje. Een leraar is over het algemeen (veel) groter dan een eerstejaarsleerling. Het weghalen van deze extreem hoge waarde trekt het gemiddelde naar beneden.
+Mean & Median (alle groepen): Omdat alle drie de groepen exact symmetrisch zijn rondom 250, en het gemiddelde en de mediaan allebei al exact 250 zijn, verandert er niets aan het gemiddelde of de mediaan als je deze centrale waarde weghaalt. Dit geldt dus voor alle groepen.
 
-De mediaan: Verandert nauwelijks of niet. De mediaan is de middelste waarde en is ongevoelig voor uitschieters (robuuste centrummaat). Het weghalen van n uiterste waarde verschuift de middelste positie hooguit een heel klein beetje.
+Mode (de modus): De modus is de waarde die het vaakst voorkomt (de hoogste staaf).
 
-Het bereik: Verandert (daalt), mits de leraar de absoluut grootste persoon in de oorspronkelijke meting was. De nieuwe maximumwaarde wordt nu de lengte van de grootste leerling, waardoor het bereik (Max - Min) kleiner wordt.
+Bij Groep 2 is 250 de absolute modus (de hoogste staaf in het midden). Als je data weghaalt uit die staaf, verandert de modus.
 
-De standaardafwijking: Verandert (daalt). Omdat de leraar een uitschieter was die ver van het groepsgemiddelde af lag, zorgde deze voor veel spreiding. Zonder deze leraar liggen de data dichter bij elkaar, wat resulteert in een kleinere standaardafwijking.
+Bij Groep 3 is er een heel klein staafje bij 250 (frequentie = 1). Als je die weghaalt, verdwijnt die staaf volledig naar 0, wat de modus (de verdeling van de overgebleven data) beïnvloedt.
+
+Bij Groep 1 is de frequentie bij 250 al 1 per sub-blokje in dat dal, het weghalen van een datapunt verandert daar de modale klassen aan de buitenkanten niet.
 ```
+
+4. Removing a value of 250 EUR from the dataset increases the standard deviation and variance. This statement is true for  
+* Group 1  
+* Group 2  
+* Group 3  
+Multiple answers may be correct.
+```text
+Omdat er in alle drie de groepen ten minste één datapunt met de waarde 250 aanwezig is (zoals te zien is aan de staafjes in het midden van de histogrammen), zorgt het weghalen van deze waarde er bij elke groep voor dat de resterende data gemiddeld meer gespreid is. Hierdoor stijgen de variantie en de standaarddeviatie in alle drie de groepen.
+```
+
 
 #### Oefening 3 (Exercise 3)
 ```text
