@@ -92,103 +92,14 @@ print(f"Range: {data_range} | Var: {variance_val:.2f} | StDev: {std_dev_val:.2f}
 
 ### Lab 2.02
 
-```python
-# Oplossing placeholder (originele inhoud behouden)
-```
+#### Exercise 1 (GPAs)
 
-```python
-# Kies een kwantitatieve kolom uit de dataset (bijv. 'pack_sizes')
-column = df['pack_sizes']
-
-# Bereken het gemiddelde (mean), de mediaan (median) en de modus (mode)
-mean_val = column.mean()
-median_val = column.median()
-mode_val = column.mode()[0] # .mode() geeft een Series, neem het eerste element
-
-print(f"Mean: {mean_val} | Median: {median_val} | Mode: {mode_val}")
-```
-
-#### Opgave: Measures of Dispersion (Spreidingsmaten)
-#### Vraag
-Calculate the range, variance, standard deviation, and interquartile range (IQR).
-
-```python
-# Bereken het bereik (range = max - min)
-data_range = column.max() - column.min()
-
-# Bereken de variantie (variance) en standaardafwijking (standard deviation)
-variance_val = column.var()
-std_dev_val = column.std()
-
-# Bereken het interkwartielbereik (IQR = Q3 - Q1)
-q1 = column.quantile(0.25)
-q3 = column.quantile(0.75)
-iqr_val = q3 - q1
-
-print(f"Range: {data_range} | Var: {variance_val:.2f} | StDev: {std_dev_val:.2f} | IQR: {iqr_val}")
-```
-
-#### Opgave: Visualiseringen voor Kwalitatieve variabelen (Nominaal/Ordinaal)
-#### Vraag
-Create a frequency table and a bar plot for a categorical variable.
-
-```python
-# Kies een categorieke kolom (bijv. 'type') en maak een frequentietabel
-freq_table = df['type'].value_counts()
-print(freq_table)
-
-# Teken een bar plot (staafdiagram) van de frequenties
-sns.countplot(data=df, x='type')
-plt.title('Frequency of App Types')
-plt.show()
-```
-
-#### Opgave: Visualiseringen voor Kwantitatieve variabelen
-#### Vraag
-Create a histogram and a box plot for a quantitative variable.
-
-```python
-# Teken een histogram om de verdeling van de data te zien
-sns.histplot(data=df, x='pack_sizes', kde=True) # kde=True voegt een dichtheidslijn toe
-plt.title('Distribution of Packet Sizes')
-plt.show()
-
-# Teken een box plot om kwartielen en uitschieters (outliers) te identificeren
-sns.boxplot(data=df, x='pack_sizes')
-plt.title('Box Plot of Packet Sizes')
-plt.show()
-```
-
-### Lab 2.02 (vervolg)
-
-#### Oefening 1 (Exercise 1)
-```text
-Opgave:
-De onderstaande boxplot toont gegevens over het GPA (Grade Point Average) van 500 leerlingen op een middelbare school.
-Wat is het bereik (range) van de GPA's in deze dataset?
-Wat is de mediaan van de GPA's?
-Wat is de interkwartielafstand (interquartile range) in deze dataset?
-Waar ligt het gemiddelde (mean) in deze dataset?
-Welk percentage van de leerlingen heeft een GPA dat buiten de eigenlijke "box" van de boxplot valt?
-Welk percentage van de leerlingen heeft een GPA onder de mediaan in deze dataset?
-```
-
-```text
-Oplossingssleutel:
-Bereik: $4 - 1,5 = 2,5$
-Mediaan: $3$
-Interkwartielafstand: $0,5$ (verschil tussen Q3 [3,25] en Q1 [2,75])
-Gemiddelde: Ongeveer $3$ (bij een perfect symmetrische verdeling is dit gelijk aan de mediaan).
-Percentage buiten de box: $50\%$
-Percentage onder de mediaan: $50\%$ (Let op: in het oorspronkelijke bestand stond abusievelijk 75% ingevuld bij de laatste vraag, maar de mediaan splitst de dataset altijd in twee gelijke delen van 50%).
-```
-
-```text
-Uitleg:
-Bereik: Maximumwaarde (rechterkant van de whiskers = 4) min de minimumwaarde (linkerkant van de whiskers = 1,5).
-Mediaan: De dikke lijn binnen de box (ligt bij 3).
-Interkwartielafstand (IQR): De lengte van de box ($Q_3 - Q_1$). $Q_3$ ligt op 3,25 en $Q_1$ op 2,75. $3,25 - 2,75 = 0,5$.
-Boxplot verdeling: De box zelf bevat de middelste 50% van de data. De resterende 50% van de studenten valt daarbuiten (25% aan de linkerkant en 25% aan de rechterkant). De mediaan verdeelt de totale groep altijd in exact 50% eronder en 50% erover.
+```tekst
+2.5 (of $4.0 - 1.5$)
+3.05 (of 3.1)1 (of $3.5 - 2.5$)
+The mean cannot be determined directly from this box plot (but it is likely slightly lower than the median due to the left skew).
+50%
+50%
 ```
 
 #### Oefening 2 (Exercise 2)
