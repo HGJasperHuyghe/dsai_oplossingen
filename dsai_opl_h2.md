@@ -257,40 +257,19 @@ plt.show()
 ### Lab 2.04
 
 ```python
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# 1. Data invoeren op basis van klassenmidden en frequenties
-midpoints = np.array([1.25, 1.35, 1.45, 1.55, 1.65, 1.75])
-frequencies = np.array([4, 14, 22, 19, 11, 3])
-
-# Data expanderen naar een individuele reeks voor eenvoudige statistiek
-wingspan_data = np.repeat(midpoints, frequencies)
-n = len(wingspan_data)  # Totaal aantal observaties = 73
-
-# 2. Berekenen van geschat gemiddelde en standaardafwijking
-mean_wingspan = np.mean(wingspan_data)
-# Gebruik ddof=1 voor de steekproefstandaardafwijking (sample standard deviation)
-std_wingspan = np.std(wingspan_data, ddof=1)
-
-print(f"Totaal aantal vogels (n): {n}")
-print(f"- Geschat Gemiddelde: {mean_wingspan:.4f} m")
-print(f"- Geschatte Standaardafwijking: {std_wingspan:.4f} m")
-
-# 3. Histogram visualiseren
-bin_edges = [1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8]
-
-plt.figure(figsize=(8, 5))
-plt.hist(wingspan_data, bins=bin_edges, weights=np.repeat(1, n), 
-         edgecolor='black', color='salmon', alpha=0.8)
-
-plt.title('Histogram van de Geschatte Spanwijdte van Vogels')
-plt.xlabel('Spanwijdte (meters)')
-plt.ylabel('Frequentie')
-plt.xticks(bin_edges)
-plt.grid(axis='y', linestyle='--', alpha=0.5)
+# Gecorrigeerde plot: gebruik 'barplot' in plaats van 'count' als de data al geteld is
+sns.barplot(data=birds, x='wingspan', y='frequency', color='skyblue')
 plt.show()
+
+print(f"Number of birds: {birds['frequency'].sum()}")
+
+# --- DE KLEINE AANPASSING ---
+# We herhalen elke 'wingspan' op basis van de bijbehorende 'frequency'
+ruwe_data = np.repeat(birds['wingspan'], birds['frequency'])
+
+# Nu kun je de standaard NumPy functies gebruiken op deze uitgevouwen data!
+print(f"Wingspan mean: {np.mean(ruwe_data)}")
+print(f"Wingspan standard deviation: {np.std(ruwe_data, ddof=1)}")
 ```
 
 ### Lab 2.05
