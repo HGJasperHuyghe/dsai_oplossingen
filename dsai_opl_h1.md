@@ -435,3 +435,184 @@ Is dit een goede steekproef? Leg uit.
 Modelantwoord:
 Matig. Hoewel het herhaaldelijk terugbellen een uitstekende methode is om non-response te verlagen, is de dekkingsfout problematisch voor dit specifieke onderzoeksdoel. Juist bij een onderzoek naar 'sociaal welzijn' wil je kwetsbare groepen (zoals ouderen of lagere inkomensklassen zonder gsm-abonnement) bereiken. Die vallen er nu buiten, waardoor de resultaten vertekend kunnen zijn.
 ```
+
+### Lab 1.04
+
+1. We want to add a separate column showing the total number of women and the total Number_of_Men by age.  
+Before we can sum, however, we need to replace all NaNs with 0. Otherwise, the total sum by age will also be NaN. We are nothing with that.
+```python
+bel_pop = bel_pop.fillna(0) 
+```
+2. Add two new columns:
+
+   - the total number of women by age
+   - the total Number_of_Men by age
+  
+```python
+# Gebruik vierkante haken en aanhalingstekens voor de kolommen
+bel_pop['Total_Number_of_Women_byAge'] = (
+    bel_pop['Women_Unmarried'] + 
+    bel_pop['Women_Married'] + 
+    bel_pop['Women_Widowed'] + 
+    bel_pop['Women_Divorced']
+)
+
+bel_pop['Total_Number_of_Men_byAge'] = (
+    bel_pop['Men_Unmarried'] + 
+    bel_pop['Men_Married'] + 
+    bel_pop['Men_Widowed'] + 
+    bel_pop['Men_Divorced']
+)
+```
+3. What is the total number of women and men in Belgium?
+ ```python
+# Totaal aantal mannen en vrouwen samen
+print((bel_pop['Total_Number_of_Men_byAge'] + bel_pop['Total_Number_of_Women_byAge']).sum())
+
+# Totaal aantal mannen
+print(bel_pop['Total_Number_of_Men_byAge'].sum())
+
+# Totaal aantal vrouwen
+print(bel_pop['Total_Number_of_Women_byAge'].sum())
+```
+4. What is the average age for women and men in Belgium? Do women still outlive men?
+  ```python
+# 1. Gemiddelde leeftijd voor vrouwen
+# Formule: (Som van [Leeftijd * Aantal per leeftijd]) / (Totaal aantal vrouwen)
+avg_age_women = (bel_pop['Age'] * bel_pop['Total_Number_of_Women_byAge']).sum() / bel_pop['Total_Number_of_Women_byAge'].sum()
+
+# 2. Gemiddelde leeftijd voor mannen
+avg_age_men = (bel_pop['Age'] * bel_pop['Total_Number_of_Men_byAge']).sum() / bel_pop['Total_Number_of_Men_byAge'].sum()
+
+print(f"Gemiddelde leeftijd vrouwen: {avg_age_women:.2f}")
+print(f"Gemiddelde leeftijd mannen: {avg_age_men:.2f}")
+
+# 3. Vergelijking: overleven vrouwen mannen?
+if avg_age_women > avg_age_men:
+    print("Ja, vrouwen hebben gemiddeld een hogere leeftijd dan mannen.")
+else:
+    print("Nee, mannen hebben gemiddeld een hogere leeftijd dan vrouwen.")
+```
+5. A first look at the data shows, that the distribution of girls vs boys is not 50/50. This is a well-known scientific phenomenon.  
+Calculate the total number of girls through age 5, and the total number of boys through age 5. Based on this, calculate the exact distribution of girls vs boys.
+
+  ```python
+# 1. Filter de dataset voor de leeftijdscategorie 0 t/m 5
+# Stel dat 'Age' de index is of als kolom aanwezig is.
+# Gebruik .loc om rijen 0 tot en met 5 te selecteren.
+data_0_to_5 = bel_pop[bel_pop['Age'] <= 5]
+
+# 2. Bereken de totalen voor meisjes en jongens in deze categorie
+total_girls_0_5 = data_0_to_5['Total_Number_of_Women_byAge'].sum()
+total_boys_0_5 = data_0_to_5['Total_Number_of_Men_byAge'].sum()
+
+# 3. Bereken de verdeling (percentages)
+total_children = total_girls_0_5 + total_boys_0_5
+percentage_girls = (total_girls_0_5 / total_children) * 100
+percentage_boys = (total_boys_0_5 / total_children) * 100
+
+# 4. Resultaten tonen
+print(f"Totaal meisjes (t/m 5 jaar): {total_girls_0_5}")
+print(f"Totaal jongens (t/m 5 jaar): {total_boys_0_5}")
+print(f"Verdeling: {percentage_girls:.2f}% meisjes vs {percentage_boys:.2f}% jongens")
+```
+6. At birth, there are more boys than girls. However, boys die younger, partly due to reckless behavior.  
+From what age do women outnumber men?
+```python
+# Filter de dataset op rijen waar er meer vrouwen dan mannen zijn
+women_outnumber_men = bel_pop[bel_pop['Total_Number_of_Women_byAge'] > bel_pop['Total_Number_of_Men_byAge']]
+
+# De laagste leeftijd waarvoor dit geldt
+first_age = women_outnumber_men['Age'].min()
+
+print(f"Vrouwen zijn vanaf de leeftijd {first_age} in de meerderheid.")
+```
+7. Make the following overview
+```python
+import numpy as np
+import pandas as pd
+from scipy.interpolate import interp1d
+
+# 1. Bereken het totaal aantal getrouwde vrouwen en mannen per leeftijd
+# (Zorg dat 'Women_Married' en 'Men_Married' in je bel_pop DataFrame staan)
+# We vullen eventuele NaN-waarden op met 0
+bel_pop["Women_Married"] = bel_pop["Women_Married"].fillna(0)
+bel_pop["Men_Married"] = bel_pop["Men_Married"].fillna(0)
+
+# 2. Bereken de cumulatieve som van de getrouwde populatie
+cum_women_married = bel_pop["Women_Married"].cumsum()
+cum_men_married = bel_pop["Men_Married"].cumsum()
+
+# 3. Zet deze cumulatieve sommen om naar percentages (0% - 100%)
+# We delen door het totale aantal getrouwde mensen (de laatste waarde van de cumsum)
+pct_women_married = (cum_women_married / cum_women_married.iloc[-1]) * 100
+pct_men_married = (cum_men_married / cum_men_married.iloc[-1]) * 100
+
+# Leeftijdenas definiëren (bijv. van 0 tot de maximale leeftijd in je dataset)
+ages = bel_pop["Age"].values
+
+# 4. Maak interpolatiefuncties (We willen de leeftijd vinden op basis van het percentage)
+# 'bounds_error=False' en 'fill_value="extrapolate"' vangen eventuele randgevallen op
+get_age_women = interp1d(
+    pct_women_married, ages, kind="linear", bounds_error=False
+)
+get_age_men = interp1d(pct_men_married, ages, kind="linear", bounds_error=False)
+
+# 5. Definieer de doelpercentages uit de screenshot
+target_percentages = [15, 20, 25, 30, 35, 40, 45, 50, 55]
+
+# 6. Loop door de percentages en print het resultaat (afgerond op gehele getallen)
+for pct in target_percentages:
+    age_w = int(np.round(get_age_women(pct)))
+    age_m = int(np.round(get_age_men(pct)))
+
+    print(f"Age at which {pct}% of the women are married = {age_w}")
+    print(f"Age at which {pct}% of the men are married = {age_m}")
+    print()  # Leeregel tussen de blokken zoals in de screenshot
+```
+
+Can you draw any conclusions based on this overview if you assume that every Belgian is married to another Belgian (which is not completely true of course)?
+
+```text
+Women marry younger than men: Across every single percentage tier, women reach that marriage milestone earlier than men. For example, by age 27, 15% of women are married, whereas men don't hit that same 15% mark until age 29.
+
+The age gap widens as people get older: For the first 15% of marriages, the age difference between men and women is only 2 years (27 vs 29). However, by the time we reach the 45% and 50% milestones, the age gap widens to 5 years (e.g., 43 for women vs 48 for men).
+```
+
+8. It is said that
+['Loneliness is as destructive to health as smoking fifteen cigarettes a day.'](https://www.bnnvara.nl/joop/artikelen/eenzaamheid-net-zo-gevaarlijk-als-roken). Calculate the average age of women and men over 45 (45 included) for each marital status.
+```python
+# 1. Filter de dataset direct voor iedereen van 45 jaar en ouder
+bel_pop_45plus = bel_pop[bel_pop["Age"] >= 45]
+leeftijden = bel_pop_45plus["Age"]
+
+print("--- Mannen en Vrouwen Samen (45+) ---")
+
+# ONGEHUWD
+ongehuwd_samen = (
+    bel_pop_45plus["Women_Unmarried"] + bel_pop_45plus["Men_Unmarried"]
+)
+avg_ongehuwd = (leeftijden * ongehuwd_samen).sum() / ongehuwd_samen.sum()
+print(f"Ongehuwd: {avg_ongehuwd:.1f} jaar")
+
+# GETROUWD
+getrouwd_samen = (
+    bel_pop_45plus["Women_Married"] + bel_pop_45plus["Men_Married"]
+)
+avg_getrouwd = (leeftijden * getrouwd_samen).sum() / getrouwd_samen.sum()
+print(f"Getrouwd: {avg_getrouwd:.1f} jaar")
+
+# VERWEDUWD
+verweduwd_samen = (
+    bel_pop_45plus["Women_Widowed"] + bel_pop_45plus["Men_Widowed"]
+)
+avg_verweduwd = (leeftijden * verweduwd_samen).sum() / verweduwd_samen.sum()
+print(f"Verweduwd: {avg_verweduwd:.1f} jaar")
+
+# GESCHEIDEN
+gescheiden_samen = (
+    bel_pop_45plus["Women_Divorced"] + bel_pop_45plus["Men_Divorced"]
+)
+avg_gescheiden = (leeftijden * gescheiden_samen).sum() / gescheiden_samen.sum()
+print(f"Gescheiden: {avg_gescheiden:.1f} jaar")
+```
