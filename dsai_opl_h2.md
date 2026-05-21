@@ -1,5 +1,37 @@
 ## Hoofdstuk 2
 
+### Theorie denk ik
+#### Opgave — Visualisaties voor kwalitatieve variabelen (nominaal/ordinaal)
+#### Vraag
+Create a frequency table and a bar plot for a categorical variable.
+
+```python
+# Kies een categorieke kolom (bijv. 'type') en maak een frequentietabel
+freq_table = df['type'].value_counts()
+print(freq_table)
+
+# Teken een bar plot (staafdiagram) van de frequenties
+sns.countplot(data=df, x='type')
+plt.title('Frequency of App Types')
+plt.show()
+```
+
+#### Opgave — Visualisaties voor kwantitatieve variabelen
+#### Vraag
+Create a histogram and a box plot for a quantitative variable.
+
+```python
+# Teken een histogram om de verdeling van de data te zien
+sns.histplot(data=df, x='pack_sizes', kde=True)  # kde=True voegt een dichtheidslijn toe
+plt.title('Distribution of Packet Sizes')
+plt.show()
+
+# Teken een box plot om kwartielen en uitschieters (outliers) te identificeren
+sns.boxplot(data=df, x='pack_sizes')
+plt.title('Box Plot of Packet Sizes')
+plt.show()
+```
+
 ### Lab 2.01
 
 #### Opgave — Packages inladen & datasets verkennen
@@ -57,36 +89,6 @@ iqr_val = q3 - q1
 print(f"Range: {data_range} | Var: {variance_val:.2f} | StDev: {std_dev_val:.2f} | IQR: {iqr_val}")
 ```
 
-#### Opgave — Visualisaties voor kwalitatieve variabelen (nominaal/ordinaal)
-#### Vraag
-Create a frequency table and a bar plot for a categorical variable.
-
-```python
-# Kies een categorieke kolom (bijv. 'type') en maak een frequentietabel
-freq_table = df['type'].value_counts()
-print(freq_table)
-
-# Teken een bar plot (staafdiagram) van de frequenties
-sns.countplot(data=df, x='type')
-plt.title('Frequency of App Types')
-plt.show()
-```
-
-#### Opgave — Visualisaties voor kwantitatieve variabelen
-#### Vraag
-Create a histogram and a box plot for a quantitative variable.
-
-```python
-# Teken een histogram om de verdeling van de data te zien
-sns.histplot(data=df, x='pack_sizes', kde=True)  # kde=True voegt een dichtheidslijn toe
-plt.title('Distribution of Packet Sizes')
-plt.show()
-
-# Teken een box plot om kwartielen en uitschieters (outliers) te identificeren
-sns.boxplot(data=df, x='pack_sizes')
-plt.title('Box Plot of Packet Sizes')
-plt.show()
-```
 
 ### Lab 2.02
 
