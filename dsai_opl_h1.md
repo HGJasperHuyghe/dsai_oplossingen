@@ -43,6 +43,95 @@ ais.info()
 - sex, sport: nominaal
 - rcc, wcc, hc, hg, ferr, bmi, ssf, pcBfat, lbm, ht, wt: ratio
 ```
+The column "id" is not an actual variable, but an index. Mark it as such.
+```python
+ais = ais.set_index('id')
+
+```
+
+The variables that are now considered "object" are qualitative variables. Change the type of each of these variables to "category". For ordinal variables, also define a type and impose an order. Verify that the conversion was successful by requesting info about the types again.
+```python
+# Convert 'sex' and 'sport' to the category type
+ais['sex'] = ais['sex'].astype('category')
+ais['sport'] = ais['sport'].astype('category')
+
+# Note: In the ais dataset, 'sex' and 'sport' are nominal. 
+# If there were ordinal variables (e.g., 'rank'), you would define them like this:
+# from pandas.api.types import CategoricalDtype
+# rank_type = CategoricalDtype(categories=['low', 'medium', 'high'], ordered=True)
+# ais['rank'] = ais['rank'].astype(rank_type)
+
+# Verify the changes
+print(ais.info())
+
+```
+
+Describe the columns `ferr`, `bmi`, `sex` and `sport` and the unique values in each of these columns. Do you recognize the characteristics of qualitative and quantitative variables in the result?
+```python
+# 1. Beschrijvende statistiek voor kwantitatieve variabelen (ferr, bmi)
+print("--- Beschrijvende statistiek (Kwantitatief) ---")
+print(ais[['ferr', 'bmi']].describe())
+
+# 2. Frequentieverdeling en unieke waarden voor kwalitatieve variabelen (sex, sport)
+print("\n--- Unieke waarden en frequenties (Kwalitatief) ---")
+print(f"Unieke waarden 'sex': {ais['sex'].unique()}")
+print(f"Aantal per 'sex':\n{ais['sex'].value_counts()}")
+print(f"\nUnieke waarden 'sport': {ais['sport'].unique()}")
+print(f"Aantal per 'sport':\n{ais['sport'].value_counts()}")
+
+```
+
+Select following elements from the dataset:
+
+- the second row (ids = 2)
+- rows 4 to 6 (ids = 5 to 7)
+- Columns 6 to 8 (`ferr`, `bmi`, `ssf`)
+- the variable `pcBfat` (by name!). There are multiple ways to retrieve this!
+- all observations for the sport "Netball"
+- just the variable `wt` of the observations for "Netball"
+- which sports are played by athletes with a BMI higher than 26? Also, provide a list of the unique values and a frequency table of how often each sport occurs.
+```python
+# 1. De tweede rij (id=2)
+# Omdat id nu de index is, gebruiken we .iloc voor de positie (index 1 is de 2e rij)
+print("--- Tweede rij (id=2) ---")
+print(ais.iloc[1])
+
+# 2. Rijen 4 tot 6 (id=5 tot 7)
+# .iloc indexen zijn 0-based, dus rij 4 is index 3, tot (exclusief) index 6
+print("\n--- Rijen 4 tot 6 ---")
+print(ais.iloc[3:6])
+
+# 3. Kolommen 6 tot 8 (ferr, bmi, ssf)
+# Dit zijn de kolommen op positie 5 t/m 7 (0-based)
+print("\n--- Kolommen 6 tot 8 ---")
+print(ais.iloc[:, 5:8])
+
+# 4. De variabele 'pcBfat' (op verschillende manieren)
+print("\n--- Variabele 'pcBfat' (3 methoden) ---")
+print(ais['pcBfat'].head())       # Via kolomnaam
+print(ais.pcBfat.head())          # Via dot-notatie
+print(ais.loc[:, 'pcBfat'].head()) # Via .loc
+
+# 5. Alle observaties voor sport "Netball"
+netball_athletes = ais[ais['sport'] == 'Netball']
+print("\n--- Observaties voor 'Netball' ---")
+print(netball_athletes)
+
+# 6. Enkel de variabele 'wt' voor "Netball"
+print("\n--- Gewicht ('wt') van 'Netball' spelers ---")
+print(netball_athletes['wt'])
+
+# 7. Sporten met BMI > 26
+high_bmi = ais[ais['bmi'] > 26]
+unique_sports = high_bmi['sport'].unique()
+sport_freq = high_bmi['sport'].value_counts()
+
+print("\n--- Sporten met BMI > 26 ---")
+print(f"Unieke sporten: {unique_sports}")
+print("\nFrequentietabel:")
+print(sport_freq)
+
+```
 
 ### Lab 1.02
 
