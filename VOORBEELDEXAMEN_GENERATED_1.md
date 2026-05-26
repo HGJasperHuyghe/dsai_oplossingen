@@ -1,4 +1,4 @@
-# Voorbeeldexamen (1°
+# Voorbeeldexamen (1)
 
 ## Voorbereiding: Datasets genereren
 
