@@ -1,0 +1,204 @@
+# Repeat Exercises
+
+## Vraag 1
+
+### Exercise 1: 1-Steekproef Hypothesetoetsing
+
+#### Overzicht
+
+Deze oefening vereist een **1-steekproef t-toets**, omdat we een numeriek steekproefgemiddelde vergelijken met een verwachte grens (1000 uur), én omdat de populatiestandaardafwijking ($\sigma$) onbekend is (we beschikken enkel over de steekproefgegevens).
+
+#### Stap 1: Identificeer de null- en alternatieve hypothese
+
+Omdat de fabrikant wil claimen dat de lampen **langer dan** 1000 uur meegaan, is dit een rechtszijdige toets.
+
+- $H_0$ (Nulhypothese): $\mu = 1000$ (de lampen gaan 1000 uur of minder mee; status quo).
+- $H_1$ (Alternatieve hypothese): $\mu > 1000$ (de lampen gaan strikt langer dan 1000 uur mee).
+
+#### Stap 2: Voer de toets uit op 5% en 1% significantieniveau
+
+```python
+import pandas as pd
+import numpy as np
+import scipy.stats as stats
+
+# Ervan uitgaande dat de data ingeladen is in df_lightbulbs
+m = df_lightbulbs['Lifetime'].mean()  # Steekproefgemiddelde
+s = df_lightbulbs['Lifetime'].std()   # Steekproefstandaardafwijking
+n = len(df_lightbulbs)                # Steekproefgrootte (100)
+mu0 = 1000                            # Verwachte waarde (Nulhypothese)
+
+# Bereken Standaardfout (SE) en Vrijheidsgraden (dof)
+se = s / np.sqrt(n)
+dof = n - 1
+
+# RECHTSZIJDIGE TOETS
+p_val = stats.t.sf(m, df=dof, loc=mu0, scale=se)
+
+print(f"Steekproefgemiddelde: {m:.2f}")
+print(f"p-waarde: {p_val:.4f}")
+
+# Beslissingen
+alpha_5 = 0.05
+alpha_1 = 0.01
+
+if p_val < alpha_5:
+    print("Op 5% niveau: Verwerp H0. Voldoende bewijs dat ze langer dan 1000 uur meegaan.")
+else:
+    print("Op 5% niveau: Verwerp H0 niet.")
+
+if p_val < alpha_1:
+    print("Op 1% niveau: Verwerp H0. Voldoende bewijs dat ze langer dan 1000 uur meegaan.")
+else:
+    print("Op 1% niveau: Verwerp H0 niet.")
+```
+
+---
+
+## Vraag 2
+
+### Exercise 2: Bivariate analyse (Kwalitatief vs Kwalitatief)
+
+#### Overzicht
+
+Je werkt met twee categorische variabelen (geslacht en voorkeur). De juiste toets om na te gaan of de ene de andere beïnvloedt, is de **Chi-kwadraat onafhankelijkheidstoets** (`stats.chi2_contingency`).
+
+#### Stap 1: Maak een gestapelde staafdiagram
+
+Volgens de grafiekenmapping van de cursus gebruiken we een gestapelde horizontale of verticale staafdiagram op basis van een crosstab.
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+# Bouw de contingentietabel
+crosstab = pd.crosstab(df_drinks['Gender'], df_drinks['Preference'])
+
+# Plot gestapelde staafdiagram
+crosstab.plot(kind='bar', stacked=True, figsize=(8, 5))
+plt.title('Drink Preference by Gender')
+plt.ylabel('Number of Consumers')
+plt.show()
+```
+
+#### Stap 2: Toets of drankvoorkeur onafhankelijk is van geslacht
+
+- $H_0$: Drankvoorkeur en geslacht zijn onafhankelijk.
+- $H_1$: Drankvoorkeur en geslacht zijn afhankelijk.
+
+```python
+# Voer de onafhankelijkheidstoets uit
+chi2_stat, p_value, dof, expected_matrix = stats.chi2_contingency(crosstab)
+
+print(f"Chi-kwadraat (χ²): {chi2_stat:.4f}")
+print(f"p-waarde: {p_value:.4f}")
+
+if p_value < 0.05:
+    print("Verwerp H0: Geslacht en drankvoorkeur zijn afhankelijk (ze beïnvloeden elkaar).")
+else:
+    print("Verwerp H0 niet: Geslacht en drankvoorkeur zijn onafhankelijk.")
+```
+
+---
+
+## Vraag 3
+
+### Exercise 3: Enkelvoudige lineaire regressie
+
+#### Overzicht
+
+Deze oefening vraagt om rommelige stringdata op te schonen, drie afzonderlijke enkelvoudige lineaire regressies te berekenen (1 kwantitatieve variabele vs. 1 kwantitatieve variabele), en de modellen te evalueren met Pearson's $R$ en de determinatiecoëfficiënt ($R^2$).
+
+#### Stap 1: Transformeer en schaal de data
+
+Je data bevat Europese formattering (komma's voor decimalen, spaties voor duizendtallen) en valutasymbolen. We moeten dit opschonen met `.str.replace()` vóór de analyse.
+
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# 1. Schoon de strings op en converteer naar float
+cols_to_clean = ['Quantity Sold', 'Average Price', 'Monthly Advertising Expenditures', 'Disposable Income per Household']
+
+for col in cols_to_clean:
+    df_pizzas[col] = (df_pizzas[col]
+                      .astype(str)
+                      .str.replace('$', '', regex=False)   # Verwijder dollartekens (literal, geen regex)
+                      .str.replace(' ', '', regex=False)   # Verwijder spaties (duizendtalscheiding)
+                      .str.replace(',', '.', regex=False)  # Vervang decimale komma door punt
+                      .astype(float))
+
+# 2. Deel specifieke kolommen door 100
+df_pizzas['Quantity Sold'] /= 100
+df_pizzas['Monthly Advertising Expenditures'] /= 100
+df_pizzas['Disposable Income per Household'] /= 100
+```
+
+> **Opmerking**: bij `.str.replace('$', '')` is `$` een regex-metateken (het betekent "einde van string"). Zonder `regex=False` wordt het dollarteken mogelijk niet verwijderd. Daarom is `regex=False` hier toegevoegd.
+
+#### Stap 2: Maak plots en bereken de regressies
+
+Om te bepalen welke variabele "het sterkst geassocieerd" is, doorlopen we de kandidaatvariabelen, fitten we een lineair regressiemodel en berekenen we $R^2$. De variabele met de hoogste $R^2$ verklaart de meeste variantie.
+
+```python
+# Doel Y is altijd Quantity Sold
+y = df_pizzas['Quantity Sold'].values
+candidate_vars = ['Average Price', 'Monthly Advertising Expenditures', 'Disposable Income per Household']
+
+for var in candidate_vars:
+    # Haal X op (moet een 2D-array zijn voor sklearn)
+    X = df_pizzas[[var]].values
+
+    # Fit het model
+    model = LinearRegression()
+    model.fit(X, y)
+
+    # Haal R en R-kwadraat op
+    r_value = np.corrcoef(df_pizzas[var], df_pizzas['Quantity Sold'])[0, 1]
+    r_squared = r_value ** 2
+
+    print(f"--- Model: Quantity Sold vs {var} ---")
+    print(f"Vergelijking: ŷ = {model.intercept_:.4f} + {model.coef_[0]:.4f}x")
+    print(f"Correlatie (R): {r_value:.4f}")
+    print(f"Verklaarde variantie (R²): {r_squared:.4f}\n")
+
+    # Genereer de gevraagde plot
+    plt.figure(figsize=(8, 5))
+    plt.scatter(df_pizzas[var], df_pizzas['Quantity Sold'], alpha=0.6, edgecolors='k', label='Raw Data')
+
+    # Teken de regressielijn
+    X_line = np.array([[df_pizzas[var].min()], [df_pizzas[var].max()]])
+    y_line = model.predict(X_line)
+
+    plt.plot(X_line, y_line, color='red', linewidth=2, label='Regression Line')
+    plt.title(f'Quantity Sold vs {var}')
+    plt.xlabel(var)
+    plt.ylabel('Quantity Sold (/100)')
+    plt.legend()
+    plt.show()
+```
+
+#### Stap 3: Conclusie — Welke variabele is het sterkst geassocieerd?
+
+Wanneer je de code uitvoert, kijk je strikt naar de verklaarde variantie ($R^2$). De kandidaatvariabele met de $R^2$ het dichtst bij 1 is het sterkst geassocieerd. Volgens de logica in je syllabus ("$R^2 > 0.70$ → sterke fit") is de variabele met de hoogste $R^2$ de meest betrouwbare verklarende variabele om de pizzaverkoop te voorspellen.
+
+---
+
+## Samenvatting Voorbeeldexamen (Deel 2)
+
+Dit tweede deel behandelt de volgende technieken:
+
+### Toetsen per variabeletype
+
+1. **1-steekproef t-toets**: Een gemiddelde toetsen tegen een grenswaarde wanneer $\sigma$ onbekend is
+2. **Chi-kwadraat toets**: Kwalitatief vs. kwalitatief (onafhankelijkheid)
+3. **Enkelvoudige lineaire regressie**: Verband tussen twee kwantitatieve variabelen
+
+### Aandachtspunten
+
+- **Datacleaning**: Europese formattering (komma als decimaal, spatie als duizendtalscheiding) en valutasymbolen verwijderen vóór de cast naar `float`; gebruik `regex=False` bij literal tekens zoals `$`
+- **Eenzijdig vs. tweezijdig**: De richting van $H_1$ bepaalt of je `stats.t.sf` (rechtszijdig) gebruikt
+- **$R^2$ (determinatiecoëfficiënt)**: Aandeel verklaarde variantie; hogere waarde = sterker verband
